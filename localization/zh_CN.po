@@ -1,0 +1,353 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: Scratch to Billions\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: zh_CN\n"
+
+# 标题页
+msgid "SCRATCH TO BILLIONS"
+msgstr "刮成百亿富翁"
+
+msgid "EVERY FORTUNE STARTS WITH ONE SCRATCH"
+msgstr "每一份好运，都从刮开开始"
+
+msgid "NEW GAME"
+msgstr "新游戏"
+
+msgid "CONTINUE"
+msgstr "继续游戏"
+
+msgid "QUIT"
+msgstr "退出游戏"
+
+msgid "LANGUAGE: %s"
+msgstr "语言：%s"
+
+msgid "MUSIC: %s"
+msgstr "音乐：%s"
+
+msgid "ON"
+msgstr "开"
+
+msgid "OFF"
+msgstr "关"
+
+msgid "v0.1 DEMO"
+msgstr "v0.1 演示版"
+
+# 游戏 HUD
+msgid "BALANCE %s"
+msgstr "余额 %s"
+
+msgid "JACKPOT POOL %s"
+msgstr "本期头奖池 %s"
+
+msgid "TICKETS %d"
+msgstr "已刮 %d 张"
+
+msgid "LEVEL %d    SP %d"
+msgstr "等级 %d    技能点 %d"
+
+msgid "LEVEL %d    XP %d/%d"
+msgstr "等级 %d    经验 %d/%d"
+
+msgid "XP %d/%d"
+msgstr "经验 %d/%d"
+
+msgid "PRICE %s"
+msgstr "票价 %s"
+
+msgid "TOP PRIZE %s"
+msgstr "头奖 %s"
+
+msgid "ODDS 1/%s"
+msgstr "头奖概率 1/%s"
+
+msgid "LUCK +%.1f%%"
+msgstr "幸运 +%.1f%%"
+
+msgid "SCRATCHED %d"
+msgstr "已刮 %d 张"
+
+msgid "TOTAL WON %s"
+msgstr "累计中奖 %s"
+
+msgid "BEST WIN %s"
+msgstr "最大单笔 %s"
+
+msgid "PITY %d/7"
+msgstr "保底 %d/7"
+
+msgid "WIN RATE %.1f%%"
+msgstr "中奖率 %.1f%%"
+
+msgid "WIN %.1f%%"
+msgstr "中奖 %.1f%%"
+
+msgid "KOI TICKET"
+msgstr "金鲤票"
+
+# 票种货架
+msgid "TICKET SHELF"
+msgstr "票种货架"
+
+msgid "CLOSE"
+msgstr "关闭"
+
+msgid "PICK"
+msgstr "选择"
+
+msgid "SELECTED"
+msgstr "已选择"
+
+msgid "LOCKED"
+msgstr "未解锁"
+
+msgid "LOCKED · SHELF Lv %d"
+msgstr "未解锁 · 货架 %d 级"
+
+msgid "Max grid %dx%d"
+msgstr "最大网格 %d×%d"
+
+msgid "Unlock bigger scratch cards."
+msgstr "解锁更大的刮刮卡。"
+
+msgid "SHOW A SYMBOL TO WIN"
+msgstr "刮出图案即中奖"
+
+msgid "TOP"
+msgstr "头奖"
+
+msgid "COMPLETE A LINE OF %d"
+msgstr "连成 %d 个相同图案即中奖"
+
+msgid "LUCKY CARD"
+msgstr "幸运卡"
+
+msgid "QUAD CARD"
+msgstr "四方卡"
+
+msgid "NINE CARD"
+msgstr "九宫卡"
+
+msgid "SIXTEEN CARD"
+msgstr "十六格卡"
+
+msgid "TWENTY-FIVE CARD"
+msgstr "二十五格卡"
+
+msgid "THIRTY-SIX CARD"
+msgstr "三十六格卡"
+
+msgid "FORTY-NINE CARD"
+msgstr "四十九格卡"
+
+msgid "SIXTY-FOUR CARD"
+msgstr "六十四格卡"
+
+msgid "EIGHTY-ONE CARD"
+msgstr "八十一格卡"
+
+msgid "PRIZE TABLE"
+msgstr "奖级表"
+
+msgid "HOLD AND DRAG TO SCRATCH"
+msgstr "按住鼠标刮开涂层"
+
+msgid "TOUCH AND DRAG TO SCRATCH"
+msgstr "手指按住刮开涂层"
+
+msgid "TAP MENU FOR SKILLS AND ALMANAC"
+msgstr "点菜单进入技能与图鉴"
+
+msgid "SPACE: NEXT | J / K: DEBUG"
+msgstr "空格：下一张 | J/K：调试"
+
+msgid "MENU"
+msgstr "菜单"
+
+msgid "SKILLS"
+msgstr "技能"
+
+msgid "ALMANAC"
+msgstr "图鉴"
+
+msgid "NEXT TICKET %s"
+msgstr "下一张 %s"
+
+msgid "FREE TICKET"
+msgstr "免费票"
+
+msgid "JACKPOT! %s"
+msgstr "头奖！%s"
+
+msgid "WIN %s"
+msgstr "中奖 %s"
+
+msgid "SO CLOSE!"
+msgstr "差一点！"
+
+msgid "SO CLOSE! +%s"
+msgstr "差一点！+%s"
+
+msgid "NO PRIZE"
+msgstr "空票"
+
+msgid "DEBUG: NEXT = JACKPOT"
+msgstr "调试：下一张 = 头奖"
+
+msgid "DEBUG: NEXT = NEAR MISS"
+msgstr "调试：下一张 = 差一点"
+
+msgid "LEVEL UP!  Lv %d  +%d SP"
+msgstr "升级！Lv %d  +%d 技能点"
+
+# 过场动画
+msgid "SKIP"
+msgstr "跳过"
+
+msgid "CHAPTER 1"
+msgstr "第一章"
+
+msgid "THE CORNER STALL"
+msgstr "街角的小摊"
+
+msgid "The corner stall stays open all night. One scratch costs 100.00."
+msgstr "街角的小摊彻夜亮着灯。一张刮刮乐，100.00。"
+
+msgid "Every ticket already carries its fate. Your only job is to scratch."
+msgstr "每张票的命运早已印好，你要做的只是刮开它。"
+
+msgid "Top prize on this card: 1.000.000.00. Odds: 1 in 100.000."
+msgstr "这张票的头奖是 1.000.000.00，概率十万分之一。"
+
+msgid "Someday the number will read 10.000.000.000.00. Start scratching."
+msgstr "总有一天，这个数字会变成 10.000.000.000.00。开始刮吧。"
+
+# 技能树
+msgid "SKILL TREE"
+msgstr "技能树"
+
+msgid "BACK"
+msgstr "返回"
+
+msgid "SKILL POINTS %d"
+msgstr "技能点 %d"
+
+msgid "%d SP"
+msgstr "%d 点"
+
+msgid "MAX"
+msgstr "已满级"
+
+msgid "SHARP EDGE"
+msgstr "锋利刮刀"
+
+msgid "AUTO SCRATCH"
+msgstr "自动刮卡"
+
+msgid "LUCKY FINGERS"
+msgstr "幸运手指"
+
+msgid "GOLDEN TOUCH"
+msgstr "点金手"
+
+msgid "FRUGAL GUY"
+msgstr "省钱达人"
+
+msgid "JACKPOT FEED"
+msgstr "奖池喂养"
+
+msgid "SOFT LANDING"
+msgstr "软着陆"
+
+msgid "MENTOR"
+msgstr "导师"
+
+msgid "Bigger scratch brush, fewer strokes."
+msgstr "笔刷更大，刮得更省力。"
+
+msgid "The card scratches itself."
+msgstr "卡片会自己刮开。"
+
+msgid "Higher win rate on every ticket."
+msgstr "提高每张票的中奖率。"
+
+msgid "Bigger payouts on every win."
+msgstr "提高每次中奖金额。"
+
+msgid "Cheaper tickets at the counter."
+msgstr "买票更便宜。"
+
+msgid "The jackpot pool grows faster."
+msgstr "头奖池增长更快。"
+
+msgid "Near misses pay a consolation."
+msgstr "差一点也有安慰奖。"
+
+msgid "More XP from every ticket."
+msgstr "每张票获得更多经验。"
+
+msgid "Brush radius %.1f"
+msgstr "笔刷半径 %.1f"
+
+msgid "Fully automatic"
+msgstr "全自动刮卡"
+
+msgid "Auto scratch %.1f%%/s"
+msgstr "自动刮卡 %.1f%%/秒"
+
+msgid "Win rate +%.1f%%"
+msgstr "中奖率 +%.1f%%"
+
+msgid "Payout x%.2f"
+msgstr "赔付 ×%.2f"
+
+msgid "Price x%.2f"
+msgstr "票价 ×%.2f"
+
+msgid "Pool +%s per ticket"
+msgstr "奖池每张 +%s"
+
+msgid "Consolation %s"
+msgstr "安慰奖 %s"
+
+msgid "XP x%.2f"
+msgstr "经验 ×%.2f"
+
+# 图鉴
+msgid "CAREER"
+msgstr "生涯统计"
+
+msgid "SCRATCHED %d    TOTAL WON %s    BEST WIN %s    LEVEL %d\nJACKPOTS %d    NEAR MISSES %d    JACKPOT POOL %s"
+msgstr "已刮 %d 张    累计中奖 %s    最大单笔 %s    等级 %d\n头奖 %d 次    差一点 %d 次    本期奖池 %s"
+
+msgid "WON x%d"
+msgstr "已中 x%d"
+
+msgid "NOT WON YET"
+msgstr "尚未中过"
+
+# 票面图案
+msgid "Cherry"
+msgstr "樱桃"
+
+msgid "Coin"
+msgstr "铜钱"
+
+msgid "Star"
+msgstr "星星"
+
+msgid "Bell"
+msgstr "铃铛"
+
+msgid "Seven"
+msgstr "红七"
+
+msgid "Ingot"
+msgstr "元宝"
+
+msgid "Koi"
+msgstr "锦鲤"
