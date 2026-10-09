@@ -1,0 +1,4 @@
+# Cloudflare Pages 配置：wrangler 与 Pages 控制台都按这里的输出目录发布
+name = "lionel-game"
+compatibility_date = "2026-10-09"
+pages_build_output_dir = "build/web"

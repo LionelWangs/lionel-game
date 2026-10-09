@@ -154,15 +154,45 @@ Godot --headless --path . --script res://tools/check_font.gd
 
 GitHub Pages 走的是 Fastly 日本节点，国内直连经常只有几十 KB/s，`index.wasm`
 就下不动了。Cloudflare 的免费套餐自带 Brotli 压缩和香港/日本/新加坡节点，
-同一条线路实测快数倍。整站是静态文件，直接部署 `build/web` 即可：
+同一条线路实测快数倍。整站是静态文件，发布 `build/web` 即可。
+
+#### 路线 A：控制台连接 Git（推荐，配一次以后自动部署）
+
+1. 打开 <https://dash.cloudflare.com> 注册并登录（免费，不需要信用卡）
+2. 左侧选 **Workers & Pages** → **Create** → **Pages** → **Connect to Git**
+3. 授权 GitHub，选中仓库 `LionelWangs/lionel-game`
+4. 构建配置这样填：
+
+   | 字段 | 值 |
+   | --- | --- |
+   | Production branch | `main` |
+   | Framework preset | `None` |
+   | Build command | 留空（`build/web` 已经随仓库提交） |
+   | Build output directory | `build/web` |
+
+5. 点 **Save and Deploy**，约一分钟后拿到 `https://lionel-game.pages.dev`
+6. 以后每次 `git push`，GitHub Pages 和 Cloudflare Pages 会同时更新
+
+#### 路线 B：本地命令行直传（不授权 GitHub）
 
 ```bash
-npx wrangler pages deploy build/web --project-name lionel-game
+npm config set registry https://registry.npmmirror.com   # 国内装包更快，可选
+npx wrangler login                                        # 浏览器授权一次
+npx wrangler pages deploy                                 # 自动读取 wrangler.toml
 ```
 
-首次运行会打开浏览器要求登录 Cloudflare 账号（免费注册）。部署完成后可以绑定
-自己的域名，再配合「优选 IP」进一步提速。仓库里的 `build/web/_headers` 会告诉
-Cloudflare 给 wasm/pck 设置长缓存，二次进入基本秒开。
+首次运行会创建 `lionel-game` 项目并输出 `https://lionel-game.pages.dev`。
+
+#### 绑定自己的域名（可选，但强烈建议）
+
+1. 把域名托管到 Cloudflare（添加站点 → 按提示把 DNS 服务器改成 Cloudflare 的）
+2. Pages 项目 → **Custom domains** → **Set up a domain** → 填 `game.你的域名`
+3. 按提示添加 CNAME 记录，证书自动签发
+4. 国内提速：把该域名在 Cloudflare DNS 里改成「优选 IP」的 A 记录，并保持代理
+   开启（橙色云朵）。`*.pages.dev` 在国内偶尔被污染，绑自定义域名会稳很多
+
+仓库里的 `build/web/_headers` 会告诉 Cloudflare 给 wasm/pck 设置长缓存，
+二次进入基本秒开。
 
 ### 国内加速的现实约束
 

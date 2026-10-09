@@ -1,5 +1,7 @@
 .godot/
 debug/
 build/
+.wrangler/
+node_modules/
 *.tmp
 .DS_Store
