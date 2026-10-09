@@ -120,6 +120,59 @@ python3 tools/serve_web.py 8060      # 打开 http://localhost:8060/
 - 缩放使用 `fractional`：小窗口 / 高 DPI 屏幕上也能填满画面（整数缩放在这种
   情况下会把游戏缩得极小）
 
+首屏体积（gzip 后的实际传输量）：
+
+| 文件 | 原始 | gzip |
+| --- | --- | --- |
+| `index.wasm` | 37.7 MB | 9.8 MB |
+| `index.pck` | 4.8 MB | 2.9 MB |
+| `index.js` | 0.27 MB | 0.08 MB |
+
+`index.pck` 已经做过瘦身：像素字体按项目实际用字裁剪（6.7 MB → 110 KB），
+没用到的音效素材移出打包范围，`debug/`、`build/`、`tools/` 也被排除。
+改动文案后请重新裁剪字体并校验，否则新字会显示成方块：
+
+```bash
+python3 -m venv .venv && .venv/bin/pip install fonttools
+.venv/bin/python tools/subset_font.py
+Godot --headless --path . --script res://tools/check_font.gd
+```
+
+## 部署
+
+### GitHub Pages（已配置自动部署）
+
+推送到 `main` 就会触发 `.github/workflows/deploy-web.yml`：
+克隆仓库 → 打包 `build/web/` → 发布到 Pages。线上地址：
+
+<https://lionelwangs.github.io/lionel-game/>
+
+首次需要仓库管理员在 Settings → Pages 里把 Source 选成 «GitHub Actions»，
+之后每次 `git push` 都会自动更新。手动触发：Actions → Deploy Web Build → Run workflow。
+
+### Cloudflare Pages（国内访问更快）
+
+GitHub Pages 走的是 Fastly 日本节点，国内直连经常只有几十 KB/s，`index.wasm`
+就下不动了。Cloudflare 的免费套餐自带 Brotli 压缩和香港/日本/新加坡节点，
+同一条线路实测快数倍。整站是静态文件，直接部署 `build/web` 即可：
+
+```bash
+npx wrangler pages deploy build/web --project-name lionel-game
+```
+
+首次运行会打开浏览器要求登录 Cloudflare 账号（免费注册）。部署完成后可以绑定
+自己的域名，再配合「优选 IP」进一步提速。仓库里的 `build/web/_headers` 会告诉
+Cloudflare 给 wasm/pck 设置长缓存，二次进入基本秒开。
+
+### 国内加速的现实约束
+
+- 真正落在中国大陆的 CDN 节点（腾讯云 / 阿里云 / 七牛等）需要域名完成 ICP 备案，
+  备案一般要 1~2 周；没有备案就只能走港澳台 / 新加坡 / 日本节点
+- `*.pages.dev`、`*.vercel.app` 这类共享域名在国内时不时被污染，绑自定义域名更稳
+- 备案 + 国内对象存储/CDN 是最快方案；不备案的话，Cloudflare Pages + 自定义域名
+  是免费方案里性价比最高的
+- 第三方 GitHub 反代（gh-proxy 等）只适合临时救急，随时可能失效
+
 ## 本地化
 
 - 代码里所有面向玩家的文字都走 `tr("English text")`，英文原文就是 key，
@@ -179,19 +232,29 @@ tools/analyze_shot.gd 截图颜色自检
 tools/dump_ascii.gd   截图转字符画（文本环境核对渲染）
 tools/row_hist.gd     按行统计颜色，定位 UI 元素
 tools/check_font.gd   像素字体字形覆盖检查
+tools/subset_font.py  按项目用字裁剪字体（需 fonttools）
+tools/pck_list.py     列出导出 pck 里的文件与体积
+tools/serve_web.py    本地静态服务器（带正确的 MIME 与 COOP/COEP 头）
 tools/test_scratch.gd 无头刮卡流程自检
 tools/test_progression.gd 无头等级与技能自检
 tools/test_tiers.gd   票种生成不变量与实测概率
-assets/audio/         音效素材（CC0）
+assets/audio/sfx/     实际打包进游戏的 4 个音效（CC0）
+assets/audio/source/  完整 Kenney 音效包（.gdignore，不参与打包）
+assets/fonts/         运行时像素字体（已裁剪）
+assets/fonts/source/  完整字体源文件（.gdignore，不参与打包）
 docs/design.md        设计定稿
 ```
 
 ## 素材来源与授权
 
-- Kenney Casino Audio（CC0）：`assets/audio/kenney_casino/`，见文件夹内 License.txt
-- Kenney Music Jingles（CC0）：`assets/audio/kenney_jingles/`，见文件夹内 License.txt
-- 缝合像素字体 12px（SIL OFL 1.1）：`assets/fonts/fusion_pixel_12px_zh_cn.ttf`，
-  授权文件在 `assets/fonts/fusion-pixel-licenses/`；未就绪时回退到系统字体
+- Kenney Casino Audio（CC0）：完整包在 `assets/audio/source/kenney_casino/`，
+  游戏用的是 `assets/audio/sfx/sfx-scratch.ogg`
+- Kenney Music Jingles（CC0）：完整包在 `assets/audio/source/kenney_jingles/`，
+  游戏用的是 `assets/audio/sfx/sfx-win-*.ogg`；授权文件见两个目录内的 License.txt
+- 缝合像素字体 12px（SIL OFL 1.1）：运行时是裁剪版
+  `assets/fonts/fusion_pixel_12px_zh_cn.ttf`，完整字体留在
+  `assets/fonts/source/`，授权文件在 `assets/fonts/fusion-pixel-licenses/`；
+  未就绪时回退到系统字体
 - 票面符号、票面纹理：自绘（`scripts/pixel_art.gd` 内的字符网格）
 - 背景音乐：程序合成（`scripts/music_factory.gd`），无外部素材、无授权问题
 

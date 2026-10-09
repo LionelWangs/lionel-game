@@ -5,10 +5,10 @@ const PRICE := 100
 const CARD_POS := Vector2(240, 44)
 const WARMUP := ["coin", "star", "bell"]
 
-const SFX_SMALL := "res://assets/audio/kenney_casino/Audio/chip-lay-1.ogg"
-const SFX_MEDIUM := "res://assets/audio/kenney_jingles/Audio/8-Bit jingles/jingles_NES09.ogg"
-const SFX_JACKPOT := "res://assets/audio/kenney_jingles/Audio/8-Bit jingles/jingles_NES12.ogg"
-const SFX_NEAR := "res://assets/audio/kenney_jingles/Audio/8-Bit jingles/jingles_NES07.ogg"
+const SFX_SMALL := "res://assets/audio/sfx/sfx-scratch.ogg"
+const SFX_MEDIUM := "res://assets/audio/sfx/sfx-win-medium.ogg"
+const SFX_JACKPOT := "res://assets/audio/sfx/sfx-win-jackpot.ogg"
+const SFX_NEAR := "res://assets/audio/sfx/sfx-win-near.ogg"
 
 var _display_money := 5000.0
 var _rng := RandomNumberGenerator.new()

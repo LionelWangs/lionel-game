@@ -1,0 +1,15 @@
+# Cloudflare Pages 专用：为静态资源设置缓存策略（GitHub Pages 会忽略本文件）
+# 引擎产物文件名固定，缓存放长一点能显著改善二次进入的速度；
+# 页面与脚本保持短缓存，避免更新后拿到旧版本。
+
+/index.html
+  Cache-Control: public, max-age=300
+
+/index.js
+  Cache-Control: public, max-age=300
+
+/index.wasm
+  Cache-Control: public, max-age=86400
+
+/index.pck
+  Cache-Control: public, max-age=86400
