@@ -282,6 +282,31 @@ msgstr "已满级"
 msgid "SHARP EDGE"
 msgstr "锋利刮刀"
 
+# 刮擦工具（随 SHARP EDGE 升级）
+msgid "TOOL: %s"
+msgstr "工具：%s"
+
+msgid "FINGER"
+msgstr "手指"
+
+msgid "LONG NAIL"
+msgstr "长指甲"
+
+msgid "SCRAPER"
+msgstr "小刮板"
+
+msgid "SHOVEL"
+msgstr "小铲子"
+
+msgid "COIN"
+msgstr "硬币"
+
+msgid "SPATULA"
+msgstr "刮刀"
+
+msgid "GOLD SHOVEL"
+msgstr "金铲子"
+
 msgid "AUTO SCRATCH"
 msgstr "自动刮卡"
 
@@ -303,8 +328,8 @@ msgstr "软着陆"
 msgid "MENTOR"
 msgstr "导师"
 
-msgid "Bigger scratch brush, fewer strokes."
-msgstr "笔刷更大，刮得更省力。"
+msgid "Bigger tool and brush, fewer strokes."
+msgstr "工具逐级升级，笔刷更大、刮得更省力。"
 
 msgid "The card scratches itself."
 msgstr "卡片会自己刮开。"

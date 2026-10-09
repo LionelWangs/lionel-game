@@ -24,6 +24,8 @@ var progress := 0.0
 var brush_radius := 7.0
 var auto_rate := 0.0
 var auto_instant := false
+## 当前刮擦工具（= SHARP EDGE 等级），决定光标图案
+var tool_level := 0
 
 var _grid := 3
 var _cells: Array = []
@@ -44,9 +46,11 @@ var _auto_queue: Array[int] = []
 
 var _noise_player: AudioStreamPlayer
 var _drag_speed := 0.0
+var _tool_pivot: Node2D
+var _tool_sprite: Sprite2D
 
 
-func setup(board: Dictionary, radius := 7.0, auto_speed := 0.0, instant := false) -> void:
+func setup(board: Dictionary, radius := 7.0, auto_speed := 0.0, instant := false, edge_level := 0) -> void:
 	result = board
 	brush_radius = radius
 	auto_rate = auto_speed
@@ -75,6 +79,8 @@ func setup(board: Dictionary, radius := 7.0, auto_speed := 0.0, instant := false
 	coat_sprite.centered = false
 	add_child(coat_sprite)
 
+	_build_tool(edge_level)
+
 	_noise_player = AudioStreamPlayer.new()
 	_noise_player.stream = AudioFactory.make_scratch_loop()
 	_noise_player.volume_db = -60.0
@@ -82,10 +88,58 @@ func setup(board: Dictionary, radius := 7.0, auto_speed := 0.0, instant := false
 	_noise_player.play()
 
 
+## 刮擦光标：图案随 SHARP EDGE 等级升级（手指 → 长指甲 → 刮板 → 铲子 → 硬币 → 刮刀 → 金铲子）
+func _build_tool(edge_level: int) -> void:
+	tool_level = PixelArt.tool_index(edge_level)
+	_tool_pivot = Node2D.new()
+	_tool_pivot.z_index = 3
+	_tool_pivot.visible = false
+	add_child(_tool_pivot)
+	_tool_sprite = Sprite2D.new()
+	_tool_sprite.centered = false
+	_tool_sprite.texture = _tool_texture(tool_level)
+	_tool_pivot.add_child(_tool_sprite)
+	_apply_tool_anchor()
+
+
+func set_tool(edge_level: int) -> void:
+	var index := PixelArt.tool_index(edge_level)
+	if index == tool_level or _tool_sprite == null:
+		return
+	tool_level = index
+	_tool_sprite.texture = _tool_texture(tool_level)
+	_apply_tool_anchor()
+
+
+func _apply_tool_anchor() -> void:
+	_tool_sprite.position = -PixelArt.tool_anchor(tool_level)
+
+
+func _tool_texture(edge_level: int) -> ImageTexture:
+	return PixelArt.tool_texture(edge_level)
+
+
+## 把工具移到刮擦位置；motion 用来做一点顺手的手感摆动
+func _move_tool(p: Vector2, motion := Vector2.ZERO) -> void:
+	if _tool_pivot == null or revealed or _auto_reveal:
+		return
+	_tool_pivot.position = p.round()
+	_tool_pivot.visible = true
+	_tool_pivot.rotation = 0.0 if motion == Vector2.ZERO else clampf(motion.x * 0.02, -0.22, 0.22)
+
+
+func _hide_tool() -> void:
+	if _tool_pivot != null:
+		_tool_pivot.visible = false
+
+
 func _process(delta: float) -> void:
 	if _coat_dirty:
 		_coat_tex.update(_coat_img)
 		_coat_dirty = false
+
+	if _tool_pivot != null and _tool_pivot.visible:
+		_tool_pivot.rotation = lerpf(_tool_pivot.rotation, 0.0, clampf(delta * 8.0, 0.0, 1.0))
 
 	if _auto_reveal and not _auto_queue.is_empty():
 		var per_frame := maxi(1, _auto_queue.size() / 14)
@@ -134,24 +188,35 @@ func _unhandled_input(event: InputEvent) -> void:
 			var tp := to_local(event.position)
 			if _hit(tp):
 				scratching = true
+				_move_tool(tp)
 				erase_at(tp)
 		else:
 			scratching = false
+			_hide_tool()
 	elif event is InputEventScreenDrag:
 		if scratching:
 			_drag_speed = event.relative.length()
-			erase_at(to_local(event.position))
+			var dp := to_local(event.position)
+			_move_tool(dp, event.relative)
+			erase_at(dp)
 	elif event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT:
 		if event.pressed:
 			var p := to_local(event.position)
 			if _hit(p):
 				scratching = true
+				_move_tool(p)
 				erase_at(p)
 		else:
 			scratching = false
-	elif event is InputEventMouseMotion and scratching:
-		_drag_speed = event.relative.length()
-		erase_at(to_local(event.position))
+	elif event is InputEventMouseMotion:
+		var mp := to_local(event.position)
+		if _hit(mp):
+			_move_tool(mp, event.relative)
+			if scratching:
+				_drag_speed = event.relative.length()
+				erase_at(mp)
+		else:
+			_hide_tool()
 
 
 func erase_at(p: Vector2) -> void:
@@ -220,6 +285,7 @@ func _after_erase() -> void:
 func _begin_auto_reveal() -> void:
 	_auto_reveal = true
 	scratching = false
+	_hide_tool()
 	_auto_queue.clear()
 	for idx in GRID_W * GRID_H:
 		if _mask[idx] == 0:
@@ -234,6 +300,7 @@ func _finish_reveal() -> void:
 		return
 	revealed = true
 	progress = 1.0
+	_hide_tool()
 	scratch_progress.emit(1.0)
 	if _noise_player:
 		_noise_player.stop()

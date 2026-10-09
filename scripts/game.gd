@@ -42,6 +42,8 @@ var _shelf_cells: Array[Button] = []
 var _shelf_infos: Array[Label] = []
 var _ticket_label: Label
 var _prize_label: Label
+var _tool_icon: TextureRect
+var _tool_label: Label
 var _sfx_small: AudioStreamPlayer
 var _sfx_medium: AudioStreamPlayer
 var _sfx_jackpot: AudioStreamPlayer
@@ -76,6 +78,9 @@ func _ready() -> void:
 
 	if _shot == "--shot-jackpot":
 		_force_next = "jackpot"
+	if _shot == "--shot-tool" or _shot == "--shot-toolmax":
+		# 工具截图：3 级展示小铲子，6 级展示金铲子
+		GameState.skills["edge"] = 3 if _shot == "--shot-tool" else 6
 	if _shot == "--shot-tier1" or _shot == "--shot-tier9":
 		GameState.ticket_grid = 1 if _shot == "--shot-tier1" else 9
 		GameState.money = maxi(GameState.money, Tickets.price_of(GameState.ticket_grid) * 3)
@@ -269,6 +274,7 @@ func _start_ticket() -> void:
 		SkillTree.brush_radius(GameState.skills),
 		SkillTree.auto_rate(GameState.skills),
 		SkillTree.auto_instant(GameState.skills),
+		SkillTree.level(GameState.skills, "edge"),
 	)
 	_card.reveal_finished.connect(_on_reveal)
 
@@ -338,6 +344,9 @@ func _refresh_hud() -> void:
 	var grid := GameState.ticket_grid
 	_jackpot_label.text = tr("JACKPOT POOL %s") % Ui.money(GameState.pool(grid))
 	_ticket_label.text = "%s  %dx%d" % [Tickets.name_of(grid), grid, grid]
+	var edge := SkillTree.level(GameState.skills, "edge")
+	_tool_icon.texture = PixelArt.tool_texture(edge)
+	_tool_label.text = tr("TOOL: %s") % tr(PixelArt.tool_name_key(edge))
 	_stat_label.text = tr("TICKETS %d") % GameState.tickets
 	_info_label.text = "\n".join([
 		tr("LEVEL %d    SP %d") % [GameState.level, GameState.skill_points],
@@ -444,6 +453,13 @@ func _build_hud() -> void:
 	_ticket_label = Ui.make_label(_world, "", Vector2(18, 42), 12, PixelArt.C_GOLD_LIGHT)
 	_shelf_button = Ui.make_button(_world, tr("TICKET SHELF"), Vector2(18, 60), Vector2(120, 26))
 	_shelf_button.pressed.connect(_open_shelf)
+	_tool_icon = TextureRect.new()
+	_tool_icon.position = Vector2(418, 92)
+	_tool_icon.size = Vector2(16, 16)
+	_tool_icon.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+	_tool_icon.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_world.add_child(_tool_icon)
+	_tool_label = Ui.make_label(_world, "", Vector2(438, 94), 12, PixelArt.C_SILVER_2)
 	_info_label = Ui.make_label(_world, "", Vector2(18, 92), 12, PixelArt.C_PAPER)
 	_info_label.add_theme_constant_override("line_spacing", 4)
 
@@ -593,6 +609,21 @@ func _run_shot() -> void:
 		print("DEBUG 面板 open=%s 按钮=%d" % [_debug_panel.is_open(), _debug_panel.buttons().size()])
 		await get_tree().create_timer(0.2).timeout
 		await SceneDirector.save_shot("debug")
+		return
+	if _shot == "--shot-tool" or _shot == "--shot-toolmax":
+		# 只刮一点点，避免触发自动清屏把工具收起来
+		var p := CARD_POS + Vector2(56, 56)
+		_send_mouse_button(p, true)
+		await get_tree().process_frame
+		for step in 4:
+			p += Vector2(14.0, 9.0)
+			_send_mouse_motion(p, Vector2(14.0, 9.0))
+			await get_tree().process_frame
+		print("TOOL 光标 level=%d name=%s 进度=%.2f" % [
+			_card.tool_level, PixelArt.tool_name_key(_card.tool_level), _card.progress,
+		])
+		await get_tree().create_timer(0.2).timeout
+		await SceneDirector.save_shot("tool" if _shot == "--shot-tool" else "toolmax")
 		return
 	if _shot == "--shot-mid":
 		_card.debug_scratch(0.28)

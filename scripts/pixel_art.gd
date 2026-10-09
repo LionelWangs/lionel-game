@@ -18,6 +18,10 @@ const C_SILVER_2 := Color8(201, 205, 211)
 const C_SILVER_3 := Color8(150, 156, 165)
 const C_SILVER_4 := Color8(98, 103, 111)
 const C_JADE := Color8(47, 169, 140)
+const C_SKIN := Color8(242, 200, 158)
+const C_SKIN_DARK := Color8(198, 150, 108)
+const C_STEEL := Color8(138, 158, 180)
+const C_STEEL_LIGHT := Color8(214, 228, 240)
 
 const PALETTE := {
 	"k": C_INK,
@@ -31,6 +35,10 @@ const PALETTE := {
 	"w": C_PAPER,
 	"s": C_SILVER_2,
 	"j": C_JADE,
+	"p": C_SKIN,
+	"P": C_SKIN_DARK,
+	"t": C_STEEL,
+	"T": C_STEEL_LIGHT,
 }
 
 const CHERRY := [
@@ -168,6 +176,190 @@ const KOI := [
 
 ## 顺序与 Prize.SYMBOL_NAMES 一致
 const SYMBOLS := [CHERRY, COIN, STAR, BELL, SEVEN, INGOT, KOI]
+
+## 刮擦工具：随 SHARP EDGE 等级一路升级，图案底部中央是落点
+const TOOL_FINGER := [
+	"................",
+	"................",
+	"......kkkk......",
+	".....kppppk.....",
+	".....kpPPpk.....",
+	".....kpPPpk.....",
+	".....kpPPpk.....",
+	".....kpPPpk.....",
+	".....kpPPpk.....",
+	".....kpPPpk.....",
+	".....kpPPpk.....",
+	".....kpPPpk.....",
+	".....kppppk.....",
+	".....kwwwwk.....",
+	"......kkkk......",
+	"................",
+]
+
+const TOOL_NAIL := [
+	"................",
+	"................",
+	"......kkkk......",
+	".....kppppk.....",
+	".....kpPPpk.....",
+	".....kpPPpk.....",
+	".....kpPPpk.....",
+	".....kpPPpk.....",
+	".....kpPPpk.....",
+	".....kpPPpk.....",
+	".....kpPPpk.....",
+	".....kpwwpk.....",
+	".....kpwwpk.....",
+	"......kwwk......",
+	".......kk.......",
+	"................",
+]
+
+const TOOL_SCRAPER := [
+	"................",
+	"................",
+	"............kk..",
+	"...........kbbk.",
+	"..........kbbk..",
+	".........kbbk...",
+	"........kbbk....",
+	".......kbbk.....",
+	"......kbbk......",
+	"..kkkkkkkkk.....",
+	".kTTTTTTTTTk....",
+	".ktttttttttk....",
+	".kkkkkkkkkk.....",
+	"................",
+	"................",
+	"................",
+]
+
+const TOOL_SHOVEL := [
+	"................",
+	"................",
+	"..........kk....",
+	".........kbbk...",
+	".........kbbk...",
+	".........kbbk...",
+	".........kbbk...",
+	".........kbbk...",
+	"......kkkkbbkk..",
+	".....kTTTTTTTk..",
+	".....ktttttttk..",
+	"......ktttttk...",
+	".......ktttk....",
+	"........kkk.....",
+	"................",
+	"................",
+]
+
+const TOOL_COIN := [
+	"................",
+	"................",
+	".....kkkkkk.....",
+	"...kkGGGGGGkk...",
+	"..kGGhhhhhhGGk..",
+	".kGGhhGGGGhhGGk.",
+	".kGhhGGGGGGhhGk.",
+	"kGhhGGGGGGGGhhGk",
+	"kGhhGGGGGGGGhhGk",
+	".kGhhGGGGGGhhGk.",
+	".kGGhhGGGGhhGGk.",
+	"..kGGhhhhhhGGk..",
+	"...kkGGGGGGkk...",
+	".....kkkkkk.....",
+	"................",
+	"................",
+]
+
+const TOOL_SPATULA := [
+	"................",
+	"...........kk...",
+	"..........kbbk..",
+	"..........kbbk..",
+	"..........kbbk..",
+	"..........kbbk..",
+	"..........kbbk..",
+	"..........kbbk..",
+	".......kkkkk....",
+	"....kkkTTTTkk...",
+	"..kkTTTTTTTTk...",
+	".kttttttttttk...",
+	".kttttttttttk...",
+	".kkkkkkkkkkkk...",
+	"................",
+	"................",
+]
+
+const TOOL_GOLD_SHOVEL := [
+	"..........h.....",
+	"..........kkk...",
+	".........kbbk...",
+	".........kbbk...",
+	".........kbbk...",
+	".........kbbk...",
+	".........kbbk...",
+	".........kbbk...",
+	"......kkkkbbkk..",
+	".....khhhhhhhk..",
+	".....kgGGGGGgk..",
+	".....kgGGGGGgk..",
+	"......kgGGGgk...",
+	".......kgggk....",
+	"........kkk.....",
+	"................",
+]
+
+## 索引即 SHARP EDGE 等级，名称 key 走 tr()
+const TOOLS := [
+	TOOL_FINGER, TOOL_NAIL, TOOL_SCRAPER, TOOL_SHOVEL,
+	TOOL_COIN, TOOL_SPATULA, TOOL_GOLD_SHOVEL,
+]
+
+const TOOL_NAMES := [
+	"FINGER", "LONG NAIL", "SCRAPER", "SHOVEL", "COIN", "SPATULA", "GOLD SHOVEL",
+]
+
+## 每个工具在贴图里的着力点，用来把工具尖端对准手指 / 鼠标位置
+const TOOL_ANCHORS := [
+	Vector2i(8, 15), Vector2i(8, 15), Vector2i(6, 13), Vector2i(9, 14),
+	Vector2i(8, 14), Vector2i(7, 14), Vector2i(9, 15),
+]
+
+
+static func tool_index(edge_level: int) -> int:
+	return clampi(edge_level, 0, TOOLS.size() - 1)
+
+
+static func tool_rows(edge_level: int) -> Array:
+	return TOOLS[tool_index(edge_level)]
+
+
+static func tool_name_key(edge_level: int) -> String:
+	return TOOL_NAMES[tool_index(edge_level)]
+
+
+static func tool_anchor(edge_level: int) -> Vector2:
+	return Vector2(TOOL_ANCHORS[tool_index(edge_level)])
+
+
+## 16x16 工具贴图，供光标与 HUD 复用
+static func tool_image(edge_level: int) -> Image:
+	var img := Image.create_empty(16, 16, false, Image.FORMAT_RGBA8)
+	draw_sprite(img, tool_rows(edge_level), 0, 0)
+	return img
+
+
+static var _tool_textures: Dictionary = {}
+
+
+## 工具贴图（带缓存）：刮卡光标与 HUD 图标共用
+static func tool_texture(edge_level: int) -> ImageTexture:
+	var index := tool_index(edge_level)
+	if not _tool_textures.has(index):
+		_tool_textures[index] = ImageTexture.create_from_image(tool_image(index))
+	return _tool_textures[index]
 
 
 static func draw_sprite(img: Image, rows: Array, ox: int, oy: int) -> void:

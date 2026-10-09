@@ -28,12 +28,12 @@ ROOT = pathlib.Path(__file__).resolve().parent.parent
 SOURCE = ROOT / "assets/fonts/source/fusion_pixel_12px_zh_cn-full.ttf"
 TARGET = ROOT / "assets/fonts/fusion_pixel_12px_zh_cn.ttf"
 
-## 参与统计的文本来源：界面脚本、场景、翻译表、工具脚本
+## 参与统计的文本来源：界面脚本、场景、翻译表
+## （tools/ 只在开发时用、不进导出包，所以不参与字形统计）
 SOURCES = [
     "scripts/*.gd",
     "scenes/*.tscn",
     "localization/*.po",
-    "tools/*.gd",
     "project.godot",
 ]
 

@@ -12,7 +12,7 @@ const DATA := {
 	},
 	"edge": {
 		"name": "SHARP EDGE",
-		"desc": "Bigger scratch brush, fewer strokes.",
+		"desc": "Bigger tool and brush, fewer strokes.",
 		"max": 6,
 	},
 	"auto": {

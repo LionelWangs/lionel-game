@@ -27,6 +27,8 @@ Godot --path . -- --shot-flow       # 全流程自检：新游戏 → 过场 →
 Godot --path . -- --shot-mid        # 半刮状态截图
 Godot --path . -- --shot-win        # 中奖演出席截图
 Godot --path . -- --shot-jackpot    # 头奖演出席截图
+Godot --path . -- --shot-tool       # 刮擦工具（3 级小铲子）截图
+Godot --path . -- --shot-toolmax    # 刮擦工具（6 级金铲子）截图
 Godot --headless --path . --script res://tools/analyze_shot.gd -- res://debug/win.png
 ```
 
@@ -72,6 +74,23 @@ Godot --path . -- --shot-debug --lang=zh_CN   # 走默认截图流程，产出 d
 ## 成长与难度曲线
 
 前期刻意做得难，后期一路变解压：
+
+**刮擦工具**：鼠标 / 手指按在票面上时，会跟着落点画出当前工具，图案随
+「SHARP EDGE」等级一路升级，HUD 右上角同步显示工具图标与名字：
+
+| 等级 | 工具 | 手感 |
+| --- | --- | --- |
+| 0 | FINGER 手指 | 起步，笔刷最小 |
+| 1 | LONG NAIL 长指甲 | 笔刷略大 |
+| 2 | SCRAPER 小刮板 | 刮得更快 |
+| 3 | SHOVEL 小铲子 | 一笔刮开一片 |
+| 4 | COIN 硬币 | 中后期主力 |
+| 5 | SPATULA 刮刀 | 大面积推平 |
+| 6 | GOLD SHOVEL 金铲子 | 满级，最快 |
+
+工具图案用 16x16 字符网格画在 `scripts/pixel_art.gd` 里，`PixelArt.TOOLS`
+按等级索引，`PixelArt.tool_texture()` 带缓存供光标和 HUD 复用；
+自检见 `tools/test_tools.gd`（档位映射、图案互不相同、着力点范围、贴图缓存）。
 
 | 指标 | 开局 | 满技能 |
 | --- | --- | --- |
@@ -292,6 +311,7 @@ tools/subset_font.py  按项目用字裁剪字体（需 fonttools）
 tools/pck_list.py     列出导出 pck 里的文件与体积
 tools/serve_web.py    本地静态服务器（带正确的 MIME 与 COOP/COEP 头）
 tools/test_debug.gd   调试面板数值入口自检
+tools/test_tools.gd   刮擦工具档位与贴图自检
 tools/test_scratch.gd 无头刮卡流程自检
 tools/test_progression.gd 无头等级与技能自检
 tools/test_tiers.gd   票种生成不变量与实测概率

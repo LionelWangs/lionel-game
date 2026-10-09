@@ -8,7 +8,6 @@ const SOURCES: Array[String] = [
 	"res://scripts",
 	"res://scenes",
 	"res://localization",
-	"res://tools",
 ]
 const EXTRA_FILES: Array[String] = ["res://project.godot"]
 const EXTENSIONS: Array[String] = ["gd", "tscn", "po", "godot"]
