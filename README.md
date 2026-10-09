@@ -38,11 +38,36 @@ Godot --headless --path . --script res://tools/analyze_shot.gd -- res://debug/wi
 - 刮开约 45%：自动清屏并结算
 - 空格 / 点击「NEXT TICKET」：买下一张票
 - `ESC` / 点击「MENU」：回标题页（自动存档）
-- 点击「SKILLS」：进技能树花技能点（每级 +3 点）
+- 点击「SKILLS」：进技能树花技能点（每级 +5 点）
 - 点击「ALMANAC」：看图鉴与生涯统计
 - `L`（标题页）：中英切换
+- `` ` `` / `F1`：开关调试面板
 - `J`：下一张必出锦鲤头奖（调试）
 - `K`：下一张必出差一点（调试）
+
+## 调试
+
+调试面板是给开发和试玩用的，入口有三种，都不影响正常玩家：
+
+- 桌面：按 `` ` `` 或 `F1` 开关
+- 启动参数：`Godot --path . -- --debug` 直接展开
+- 移动端：在标题页连点右下角版本号 5 次
+
+面板里的按钮：
+
+- `+1 SP` / `+10 SP`：直接加技能点
+- `+1 LEVEL`：加一级（连带该级技能点）
+- `增加 …`：加钱，验证大票面
+- `货架 +1`：解锁下一档票种，不用刷技能树
+- `下张头奖` / `下张差一点`：指定下一张票的结果
+- `重置存档`：回到初始状态，方便反复试
+
+自检与截图：
+
+```bash
+Godot --headless --path . --script res://tools/test_debug.gd
+Godot --path . -- --shot-debug --lang=zh_CN   # 走默认截图流程，产出 debug/debug-zh.png
+```
 
 ## 成长与难度曲线
 
@@ -257,6 +282,7 @@ scripts/ui.gd         像素 UI 工厂（标签、按钮、金额格式）
 scripts/scratch_card.gd  涂层擦除、进度、自动清屏
 scripts/prize.gd      票面与奖项生成
 scripts/pixel_art.gd  调色板与 16x16 符号像素图
+scripts/debug_panel.gd 调试面板（加技能点 / 加钱 / 强制结果 / 重置存档）
 scripts/audio_factory.gd 程序合成音效（兜底）
 tools/analyze_shot.gd 截图颜色自检
 tools/dump_ascii.gd   截图转字符画（文本环境核对渲染）
@@ -265,6 +291,7 @@ tools/check_font.gd   像素字体字形覆盖检查
 tools/subset_font.py  按项目用字裁剪字体（需 fonttools）
 tools/pck_list.py     列出导出 pck 里的文件与体积
 tools/serve_web.py    本地静态服务器（带正确的 MIME 与 COOP/COEP 头）
+tools/test_debug.gd   调试面板数值入口自检
 tools/test_scratch.gd 无头刮卡流程自检
 tools/test_progression.gd 无头等级与技能自检
 tools/test_tiers.gd   票种生成不变量与实测概率

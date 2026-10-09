@@ -10,6 +10,8 @@ var _lantern_base: Array[Vector2] = []
 var _time := 0.0
 var _selected := 0
 var _shot := ""
+var _version_label: Label
+var _debug_panel: DebugPanel
 
 
 func _ready() -> void:
@@ -21,6 +23,9 @@ func _ready() -> void:
 	_build_menu()
 	_build_ambience()
 	Ui.ignore_decorative(self)
+	# 调试面板：桌面按 ` / F1，移动端连点版本号 5 次
+	_debug_panel = DebugPanel.attach(self, _shot == "--shot-debug")
+	DebugPanel.bind_secret_toggle(_version_label, _debug_panel)
 	Music.play("title")
 	if _shot != "":
 		DisplayServer.window_move_to_foreground()
@@ -102,9 +107,9 @@ func _build_logo() -> void:
 	var sub := Ui.make_label(self, tr("EVERY FORTUNE STARTS WITH ONE SCRATCH"), Vector2(0, 76), 12, PixelArt.C_PAPER)
 	sub.size = Vector2(640, 16)
 	sub.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	var version := Ui.make_label(self, tr(VERSION), Vector2(0, 336), 12, Color8(122, 127, 137))
-	version.size = Vector2(620, 16)
-	version.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+	_version_label = Ui.make_label(self, tr(VERSION), Vector2(0, 336), 12, Color8(122, 127, 137))
+	_version_label.size = Vector2(620, 16)
+	_version_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
 
 
 func _build_menu() -> void:

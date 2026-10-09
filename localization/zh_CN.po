@@ -162,8 +162,8 @@ msgstr "手指按住刮开涂层"
 msgid "TAP MENU FOR SKILLS AND ALMANAC"
 msgstr "点菜单进入技能与图鉴"
 
-msgid "SPACE: NEXT | J / K: DEBUG"
-msgstr "空格：下一张 | J/K：调试"
+msgid "SPACE: NEXT | J / K / ` : DEBUG"
+msgstr "空格：下一张 | J/K/`：调试"
 
 msgid "MENU"
 msgstr "菜单"
@@ -200,6 +200,43 @@ msgstr "调试：下一张 = 头奖"
 
 msgid "DEBUG: NEXT = NEAR MISS"
 msgstr "调试：下一张 = 差一点"
+
+# 调试面板
+msgid "DEBUG"
+msgstr "调试"
+
+msgid "` : TOGGLE"
+msgstr "`：开关"
+
+msgid "` : DEBUG"
+msgstr "`：调试"
+
+msgid "+1 SP"
+msgstr "+1 技能点"
+
+msgid "+10 SP"
+msgstr "+10 技能点"
+
+msgid "+1 LEVEL"
+msgstr "+1 等级"
+
+msgid "ADD %s"
+msgstr "增加 %s"
+
+msgid "SHELF +1"
+msgstr "货架 +1"
+
+msgid "RESET SAVE"
+msgstr "重置存档"
+
+msgid "JACKPOT"
+msgstr "下张头奖"
+
+msgid "NEAR MISS"
+msgstr "下张差一点"
+
+msgid "DEBUG: %s"
+msgstr "调试：%s"
 
 msgid "LEVEL UP!  Lv %d  +%d SP"
 msgstr "升级！Lv %d  +%d 技能点"

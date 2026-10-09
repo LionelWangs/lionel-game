@@ -11,6 +11,7 @@ var _shot := ""
 var _header: Label
 var _points: Label
 var _cards: Dictionary = {}
+var _debug_panel: DebugPanel
 
 
 func _ready() -> void:
@@ -27,6 +28,8 @@ func _ready() -> void:
 		GameState.level = maxi(GameState.level, 9)
 	_build()
 	Ui.ignore_decorative(self)
+	_debug_panel = DebugPanel.attach(self, _shot == "--shot-debug")
+	_debug_panel.changed.connect(_refresh)
 	if _shot != "":
 		DisplayServer.window_move_to_foreground()
 		_run_shot()

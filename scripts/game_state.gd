@@ -3,6 +3,8 @@ extends Node
 
 const SAVE_PATH := "user://save.json"
 const FONT_PATH := "res://assets/fonts/fusion_pixel_12px_zh_cn.ttf"
+## 每升一级给多少技能点
+const SP_PER_LEVEL := 5
 
 var money := 5000
 ## 每个票种（网格）各自的奖池
@@ -22,6 +24,10 @@ var locale := "en"
 var music_on := true
 ## 当前选择的票种网格
 var ticket_grid := 1
+## 调试模式：--debug 启动时打开，或按 ` / F1 手动打开
+var debug := false
+## 下一张票强制结果（jackpot / near_miss / 空字符串），由调试面板写入
+var debug_force_next := ""
 
 var ui_font: Font
 ## 无头测试时关闭写盘
@@ -32,6 +38,13 @@ func _ready() -> void:
 	ui_font = _load_font()
 	Ui.ui_font = ui_font
 	_apply_startup_locale()
+	_apply_startup_debug()
+
+
+func _apply_startup_debug() -> void:
+	for arg in OS.get_cmdline_user_args():
+		if arg == "--debug":
+			debug = true
 
 
 func _apply_startup_locale() -> void:
@@ -213,7 +226,7 @@ func add_xp(amount: int) -> int:
 	while xp >= xp_needed(level):
 		xp -= xp_needed(level)
 		level += 1
-		skill_points += 3
+		skill_points += SP_PER_LEVEL
 		gained += 1
 	save()
 	return gained
@@ -238,6 +251,50 @@ func buy_skill(id: String) -> bool:
 		ticket_grid = max_unlocked_grid()
 	save()
 	return true
+
+
+## ---------- 调试辅助（只在 DebugPanel 与无头测试里使用） ----------
+
+func grant_sp(amount: int) -> void:
+	skill_points = maxi(0, skill_points + amount)
+	save()
+
+
+func grant_money(amount: int) -> void:
+	money = maxi(0, money + amount)
+	save()
+
+
+## 直接加等级，连带发放该级的技能点
+func grant_levels(amount: int) -> void:
+	for _i in maxi(0, amount):
+		level += 1
+		skill_points += SP_PER_LEVEL
+	save()
+
+
+## 白嫖一级票种货架，用来快速验证大票面
+func unlock_next_tier() -> void:
+	var shelf := mini(SkillTree.max_level("shelf"), SkillTree.level(skills, "shelf") + 1)
+	skills["shelf"] = shelf
+	if ticket_grid > max_unlocked_grid():
+		ticket_grid = max_unlocked_grid()
+	save()
+
+
+## 指定下一张票的结果：jackpot / near_miss / 空字符串表示不改
+func force_next_result(kind: String) -> void:
+	debug_force_next = kind
+
+
+func consume_forced_result() -> String:
+	var kind := debug_force_next
+	debug_force_next = ""
+	return kind
+
+
+func clear_save() -> void:
+	new_game()
 
 
 func register_win(symbol: int) -> void:

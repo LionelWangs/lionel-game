@@ -47,6 +47,7 @@ var _sfx_medium: AudioStreamPlayer
 var _sfx_jackpot: AudioStreamPlayer
 var _sfx_near: AudioStreamPlayer
 var _sfx_lose: AudioStreamPlayer
+var _debug_panel: DebugPanel
 
 
 func _ready() -> void:
@@ -67,6 +68,10 @@ func _ready() -> void:
 	_build_audio()
 	Ui.ignore_decorative(self)
 	_build_shelf()
+	_debug_panel = DebugPanel.attach(self, _shot == "--shot-debug")
+	_debug_panel.notice.connect(func(text: String) -> void:
+		_show_banner(text, PixelArt.C_GOLD_LIGHT, 0.9)
+	)
 	Music.play("game")
 
 	if _shot == "--shot-jackpot":
@@ -243,6 +248,8 @@ func _start_ticket() -> void:
 
 	var force := _force_next
 	_force_next = ""
+	if force == "":
+		force = GameState.consume_forced_result()
 	if force == "" and grid == 1 and _warmup_index < WARMUP.size():
 		force = WARMUP[_warmup_index]
 		_warmup_index += 1
@@ -322,7 +329,7 @@ func _on_reveal(result: Dictionary) -> void:
 		GameState.save()
 	var gained := GameState.add_xp(GameState.xp_per_ticket())
 	if gained > 0:
-		_show_toast(tr("LEVEL UP!  Lv %d  +%d SP") % [GameState.level, gained * 3])
+			_show_toast(tr("LEVEL UP!  Lv %d  +%d SP") % [GameState.level, gained * GameState.SP_PER_LEVEL])
 	_buy_button.disabled = false
 	_refresh_hud()
 
@@ -475,7 +482,7 @@ func _build_hud() -> void:
 		Ui.make_label(_world, tr("TAP MENU FOR SKILLS AND ALMANAC"), Vector2(16, 332), 12, Color8(122, 127, 137))
 	else:
 		Ui.make_label(_world, tr("HOLD AND DRAG TO SCRATCH"), Vector2(16, 310), 12, PixelArt.C_PAPER)
-		Ui.make_label(_world, tr("SPACE: NEXT | J / K: DEBUG"), Vector2(16, 332), 12, Color8(122, 127, 137))
+		Ui.make_label(_world, tr("SPACE: NEXT | J / K / ` : DEBUG"), Vector2(16, 332), 12, Color8(122, 127, 137))
 
 	_menu_button = Ui.make_button(_world, tr("MENU"), Vector2(204, 306), Vector2(64, 40))
 	_menu_button.pressed.connect(_back_to_title)
@@ -581,6 +588,11 @@ func _run_shot() -> void:
 	if _shot == "--shot-flow":
 		await get_tree().create_timer(0.2).timeout
 		await SceneDirector.save_shot("flow")
+		return
+	if _shot == "--shot-debug":
+		print("DEBUG 面板 open=%s 按钮=%d" % [_debug_panel.is_open(), _debug_panel.buttons().size()])
+		await get_tree().create_timer(0.2).timeout
+		await SceneDirector.save_shot("debug")
 		return
 	if _shot == "--shot-mid":
 		_card.debug_scratch(0.28)
