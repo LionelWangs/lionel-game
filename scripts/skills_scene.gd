@@ -12,6 +12,7 @@ var _header: Label
 var _points: Label
 var _cards: Dictionary = {}
 var _debug_panel: DebugPanel
+var _toast: Label
 
 
 func _ready() -> void:
@@ -67,8 +68,34 @@ func _build() -> void:
 		var effect := Ui.make_label(self, "", pos + Vector2(10, 36), 12, PixelArt.C_PAPER)
 		var button := Ui.make_button(self, "1 SP", pos + Vector2(CARD_W - 94.0, 26), Vector2(84, 26))
 		button.pressed.connect(_buy.bind(id))
-		_cards[id] = {"level": level_label, "effect": effect, "button": button}
+		var tools := _build_tool_preview(id, pos)
+		_cards[id] = {"level": level_label, "effect": effect, "button": button, "tools": tools}
+
+	_toast = Ui.make_label(self, "", Vector2(0, 322), 12, PixelArt.C_GOLD_LIGHT)
+	_toast.size = Vector2(640, 18)
+	_toast.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	_toast.modulate.a = 0.0
 	_refresh()
+
+
+## 锋利刮刀这张卡额外画「当前工具 → 下一档工具」预览
+func _build_tool_preview(id: String, pos: Vector2) -> Dictionary:
+	if id != "edge":
+		return {}
+	var current := TextureRect.new()
+	current.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+	current.position = pos + Vector2(150, 34)
+	current.size = Vector2(16, 16)
+	current.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	add_child(current)
+	Ui.make_label(self, ">", pos + Vector2(168, 36), 12, PixelArt.C_SILVER_2)
+	var next := TextureRect.new()
+	next.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+	next.position = pos + Vector2(180, 34)
+	next.size = Vector2(16, 16)
+	next.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	add_child(next)
+	return {"current": current, "next": next}
 
 
 func _refresh() -> void:
@@ -88,6 +115,11 @@ func _refresh() -> void:
 			var cost := SkillTree.cost(lv + 1)
 			button.text = tr("%d SP") % cost
 			button.disabled = GameState.skill_points < cost
+		if not card.tools.is_empty():
+			var top := PixelArt.TOOLS.size() - 1
+			card.tools.current.texture = PixelArt.tool_texture(lv)
+			card.tools.next.texture = PixelArt.tool_texture(mini(lv + 1, top))
+			card.tools.next.modulate.a = 0.3 if lv >= top else 1.0
 
 
 func _buy(id: String) -> void:
@@ -95,6 +127,18 @@ func _buy(id: String) -> void:
 		return
 	if GameState.buy_skill(id):
 		_refresh()
+		if id == "edge":
+			_show_tool_toast()
+
+
+## 换工具时给个明确反馈，避免「升了级没感觉」
+func _show_tool_toast() -> void:
+	var edge := SkillTree.level(GameState.skills, "edge")
+	_toast.text = tr("SHARP EDGE Lv %d · %s") % [edge, tr(PixelArt.tool_name_key(edge))]
+	_toast.modulate.a = 1.0
+	var tween := create_tween()
+	tween.tween_interval(1.4)
+	tween.tween_property(_toast, "modulate:a", 0.0, 0.4)
 
 
 func _back() -> void:

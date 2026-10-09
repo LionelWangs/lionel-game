@@ -26,6 +26,7 @@ const KEYS := [
 	"JACKPOT FEED", "SOFT LANDING", "MENTOR", "Bigger tool and brush, fewer strokes.",
 	"The card scratches itself.", "Higher win rate on every ticket.",
 	"TOOL: %s", "FINGER", "LONG NAIL", "SCRAPER", "SHOVEL", "COIN", "SPATULA", "GOLD SHOVEL",
+	"SHARP EDGE Lv %d · %s",
 	"Bigger payouts on every win.", "Cheaper tickets at the counter.",
 	"The jackpot pool grows faster.", "Near misses pay a consolation.",
 	"More XP from every ticket.", "Brush radius %.1f", "Fully automatic",

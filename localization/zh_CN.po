@@ -307,6 +307,9 @@ msgstr "刮刀"
 msgid "GOLD SHOVEL"
 msgstr "金铲子"
 
+msgid "SHARP EDGE Lv %d · %s"
+msgstr "锋利刮刀 Lv %d · %s"
+
 msgid "AUTO SCRATCH"
 msgstr "自动刮卡"
 

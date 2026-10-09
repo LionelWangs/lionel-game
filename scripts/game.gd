@@ -44,6 +44,7 @@ var _ticket_label: Label
 var _prize_label: Label
 var _tool_icon: TextureRect
 var _tool_label: Label
+var _cursor_tool := -1
 var _sfx_small: AudioStreamPlayer
 var _sfx_medium: AudioStreamPlayer
 var _sfx_jackpot: AudioStreamPlayer
@@ -335,7 +336,7 @@ func _on_reveal(result: Dictionary) -> void:
 		GameState.save()
 	var gained := GameState.add_xp(GameState.xp_per_ticket())
 	if gained > 0:
-			_show_toast(tr("LEVEL UP!  Lv %d  +%d SP") % [GameState.level, gained * GameState.SP_PER_LEVEL])
+		_show_toast(tr("LEVEL UP!  Lv %d  +%d SP") % [GameState.level, gained * GameState.SP_PER_LEVEL])
 	_buy_button.disabled = false
 	_refresh_hud()
 
@@ -344,9 +345,7 @@ func _refresh_hud() -> void:
 	var grid := GameState.ticket_grid
 	_jackpot_label.text = tr("JACKPOT POOL %s") % Ui.money(GameState.pool(grid))
 	_ticket_label.text = "%s  %dx%d" % [Tickets.name_of(grid), grid, grid]
-	var edge := SkillTree.level(GameState.skills, "edge")
-	_tool_icon.texture = PixelArt.tool_texture(edge)
-	_tool_label.text = tr("TOOL: %s") % tr(PixelArt.tool_name_key(edge))
+	_apply_tool_cursor()
 	_stat_label.text = tr("TICKETS %d") % GameState.tickets
 	_info_label.text = "\n".join([
 		tr("LEVEL %d    SP %d") % [GameState.level, GameState.skill_points],
@@ -370,6 +369,23 @@ func _refresh_hud() -> void:
 	_xp_fill.size.x = maxf(1.0, 202.0 * GameState.xp_progress())
 	_buy_button.text = tr("NEXT TICKET %s") % Ui.money(GameState.ticket_price())
 	_shelf_button.disabled = not _buy_button.disabled or _shelf_root.visible
+
+
+## HUD 工具图标 + 直接把系统鼠标指针换成当前工具（尺寸随等级变大）
+func _apply_tool_cursor() -> void:
+	var edge := SkillTree.level(GameState.skills, "edge")
+	_tool_icon.texture = PixelArt.tool_texture(edge)
+	_tool_label.text = tr("TOOL: %s") % tr(PixelArt.tool_name_key(edge))
+	if _cursor_tool == edge:
+		return
+	_cursor_tool = edge
+	Input.set_custom_mouse_cursor(
+		PixelArt.tool_cursor_texture(edge), Input.CURSOR_ARROW, PixelArt.tool_cursor_hotspot(edge))
+
+
+func _exit_tree() -> void:
+	# 离开游戏场景恢复系统默认指针
+	Input.set_custom_mouse_cursor(null)
 
 
 func _show_banner(text: String, color: Color, hold := 1.0) -> void:
@@ -596,6 +612,7 @@ func _run_shot() -> void:
 		await SceneDirector.save_shot("touch")
 		return
 	if _shot == "--shot-mouse":
+		_card.preview_tool = true
 		await _simulate_mouse_scratch()
 		await get_tree().create_timer(0.2).timeout
 		print("MOUSE 进度=%.2f 正在刮=%s" % [_card.progress, _card.scratching])
@@ -612,6 +629,7 @@ func _run_shot() -> void:
 		return
 	if _shot == "--shot-tool" or _shot == "--shot-toolmax":
 		# 只刮一点点，避免触发自动清屏把工具收起来
+		_card.preview_tool = true
 		var p := CARD_POS + Vector2(56, 56)
 		_send_mouse_button(p, true)
 		await get_tree().process_frame
@@ -619,8 +637,13 @@ func _run_shot() -> void:
 			p += Vector2(14.0, 9.0)
 			_send_mouse_motion(p, Vector2(14.0, 9.0))
 			await get_tree().process_frame
-		print("TOOL 光标 level=%d name=%s 进度=%.2f" % [
-			_card.tool_level, PixelArt.tool_name_key(_card.tool_level), _card.progress,
+		var info := _card.debug_tool_info()
+		var edge_now := SkillTree.level(GameState.skills, "edge")
+		print("TOOL 光标 level=%d name=%s 票面放大=%dx 贴图=%dpx 可见=%s 系统光标=%dx%d 进度=%.2f" % [
+			info.level, info.name, info.scale, info.texture, info.visible,
+			PixelArt.tool_cursor_texture(edge_now).get_width(),
+			PixelArt.tool_cursor_texture(edge_now).get_height(),
+			_card.progress,
 		])
 		await get_tree().create_timer(0.2).timeout
 		await SceneDirector.save_shot("tool" if _shot == "--shot-tool" else "toolmax")

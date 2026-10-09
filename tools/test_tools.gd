@@ -43,6 +43,26 @@ func _process(_delta: float) -> bool:
 	ok = _check(ok, PixelArt.tool_texture(2) == PixelArt.tool_texture(2), "同一档位贴图命中缓存")
 	ok = _check(ok, PixelArt.tool_texture(2) != PixelArt.tool_texture(3), "不同档位贴图不同")
 
+	var last_size := 0
+	for level in PixelArt.TOOLS.size():
+		var name := PixelArt.tool_name_key(level)
+		var scale := PixelArt.tool_cursor_scale(level)
+		var cursor := PixelArt.tool_cursor_texture(level)
+		var size := cursor.get_width()
+		ok = _check(ok, size == 16 * scale, "%s 光标 %dx%d（x%d）" % [name, size, size, scale])
+		ok = _check(ok, size >= last_size, "%s 光标不小于上一档" % name)
+		last_size = size
+
+		var hotspot := PixelArt.tool_cursor_hotspot(level)
+		ok = _check(ok, hotspot.x >= 0.0 and hotspot.x < float(size)
+			and hotspot.y >= 0.0 and hotspot.y < float(size),
+			"%s 光标热点 %s 在贴图内" % [name, hotspot])
+		ok = _check(ok, PixelArt.tool_touch_scale(level) >= 2,
+			"%s 触屏贴图放大 %d 倍" % [name, PixelArt.tool_touch_scale(level)])
+
+	ok = _check(ok, PixelArt.tool_cursor_texture(6).get_width() >= 64,
+		"满级光标足够大：%dpx" % PixelArt.tool_cursor_texture(6).get_width())
+
 	print("工具阶梯: " + " -> ".join(PixelArt.TOOL_NAMES))
 	print("PASS 刮擦工具自检" if ok else "FAIL 刮擦工具自检")
 	quit(0 if ok else 1)

@@ -26,6 +26,8 @@ var auto_rate := 0.0
 var auto_instant := false
 ## 当前刮擦工具（= SHARP EDGE 等级），决定光标图案
 var tool_level := 0
+## 截图自检用：鼠标输入时也把工具画在票面上（系统光标不会进截图）
+var preview_tool := false
 
 var _grid := 3
 var _cells: Array = []
@@ -48,6 +50,7 @@ var _noise_player: AudioStreamPlayer
 var _drag_speed := 0.0
 var _tool_pivot: Node2D
 var _tool_sprite: Sprite2D
+var _tool_scale := 1
 
 
 func setup(board: Dictionary, radius := 7.0, auto_speed := 0.0, instant := false, edge_level := 0) -> void:
@@ -98,6 +101,8 @@ func _build_tool(edge_level: int) -> void:
 	_tool_sprite = Sprite2D.new()
 	_tool_sprite.centered = false
 	_tool_sprite.texture = _tool_texture(tool_level)
+	_tool_scale = PixelArt.tool_touch_scale(tool_level)
+	_tool_sprite.scale = Vector2(_tool_scale, _tool_scale)
 	_tool_pivot.add_child(_tool_sprite)
 	_apply_tool_anchor()
 
@@ -108,11 +113,13 @@ func set_tool(edge_level: int) -> void:
 		return
 	tool_level = index
 	_tool_sprite.texture = _tool_texture(tool_level)
+	_tool_scale = PixelArt.tool_touch_scale(tool_level)
+	_tool_sprite.scale = Vector2(_tool_scale, _tool_scale)
 	_apply_tool_anchor()
 
 
 func _apply_tool_anchor() -> void:
-	_tool_sprite.position = -PixelArt.tool_anchor(tool_level)
+	_tool_sprite.position = -PixelArt.tool_anchor(tool_level) * float(_tool_scale)
 
 
 func _tool_texture(edge_level: int) -> ImageTexture:
@@ -131,6 +138,17 @@ func _move_tool(p: Vector2, motion := Vector2.ZERO) -> void:
 func _hide_tool() -> void:
 	if _tool_pivot != null:
 		_tool_pivot.visible = false
+
+
+## 供截图自检输出工具状态
+func debug_tool_info() -> Dictionary:
+	return {
+		"level": tool_level,
+		"name": PixelArt.tool_name_key(tool_level),
+		"scale": _tool_scale,
+		"visible": _tool_pivot != null and _tool_pivot.visible,
+		"texture": 0 if _tool_sprite == null else int(_tool_sprite.texture.get_width()),
+	}
 
 
 func _process(delta: float) -> void:
@@ -204,19 +222,21 @@ func _unhandled_input(event: InputEvent) -> void:
 			var p := to_local(event.position)
 			if _hit(p):
 				scratching = true
-				_move_tool(p)
+				if preview_tool:
+					_move_tool(p)
 				erase_at(p)
 		else:
 			scratching = false
 	elif event is InputEventMouseMotion:
 		var mp := to_local(event.position)
-		if _hit(mp):
+		# 鼠标用系统自定义指针（大图），票面里不重复画工具；截图自检时例外
+		if preview_tool and _hit(mp):
 			_move_tool(mp, event.relative)
-			if scratching:
-				_drag_speed = event.relative.length()
-				erase_at(mp)
-		else:
+		elif not preview_tool and _tool_pivot != null and _tool_pivot.visible:
 			_hide_tool()
+		if scratching and _hit(mp):
+			_drag_speed = event.relative.length()
+			erase_at(mp)
 
 
 func erase_at(p: Vector2) -> void:

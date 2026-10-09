@@ -79,7 +79,8 @@ static func cost_next(skills: Dictionary, id: String) -> int:
 
 
 static func brush_radius(skills: Dictionary) -> float:
-	return 5.0 + float(level(skills, "edge"))
+	# 工具越大刮面越大：1 级约 6px，满级接近 15px 半径
+	return 4.0 + float(level(skills, "edge")) * 1.8
 
 
 ## 自动刮卡速度（每秒刮开卡面的百分比）

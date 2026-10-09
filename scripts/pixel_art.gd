@@ -362,6 +362,47 @@ static func tool_texture(edge_level: int) -> ImageTexture:
 	return _tool_textures[index]
 
 
+## 鼠标光标的放大倍数：越到后面越有分量，升级一眼能看出来
+const TOOL_CURSOR_SCALES := [2, 3, 3, 4, 4, 5, 5]
+## 触屏时画在手指上方的放大倍数（游戏内坐标）
+const TOOL_TOUCH_SCALES := [2, 2, 2, 3, 3, 3, 3]
+
+
+static func tool_cursor_scale(edge_level: int) -> int:
+	return TOOL_CURSOR_SCALES[tool_index(edge_level)]
+
+
+static func tool_touch_scale(edge_level: int) -> int:
+	return TOOL_TOUCH_SCALES[tool_index(edge_level)]
+
+
+## 整数倍放大（最近邻），保持像素锐利
+static func tool_image_scaled(edge_level: int, scale: int) -> Image:
+	var img := tool_image(edge_level)
+	var factor := maxi(1, scale)
+	if factor > 1:
+		img.resize(img.get_width() * factor, img.get_height() * factor, Image.INTERPOLATE_NEAREST)
+	return img
+
+
+static var _cursor_textures: Dictionary = {}
+
+
+## 系统鼠标指针贴图：按档位放大后缓存
+static func tool_cursor_texture(edge_level: int) -> ImageTexture:
+	var index := tool_index(edge_level)
+	if not _cursor_textures.has(index):
+		_cursor_textures[index] = ImageTexture.create_from_image(
+			tool_image_scaled(index, TOOL_CURSOR_SCALES[index]))
+	return _cursor_textures[index]
+
+
+## 光标热点：工具着力点在放大贴图里的坐标
+static func tool_cursor_hotspot(edge_level: int) -> Vector2:
+	var index := tool_index(edge_level)
+	return tool_anchor(index) * float(TOOL_CURSOR_SCALES[index])
+
+
 static func draw_sprite(img: Image, rows: Array, ox: int, oy: int) -> void:
 	for y in rows.size():
 		var row: String = rows[y]

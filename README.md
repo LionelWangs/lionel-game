@@ -75,18 +75,24 @@ Godot --path . -- --shot-debug --lang=zh_CN   # 走默认截图流程，产出 d
 
 前期刻意做得难，后期一路变解压：
 
-**刮擦工具**：鼠标 / 手指按在票面上时，会跟着落点画出当前工具，图案随
-「SHARP EDGE」等级一路升级，HUD 右上角同步显示工具图标与名字：
+**刮擦工具**：图案随「SHARP EDGE」等级一路升级。鼠标指针是用
+`Input.set_custom_mouse_cursor()` 直接换掉的系统光标，越到后面越大
+（32px → 80px）；触屏没有系统光标，改成在手指上方画同款工具（32~48px）。
+HUD 右上角显示当前工具图标与名字，技能树里 SHARP EDGE 那张卡会画
+「当前工具 > 下一档工具」的预览，买完弹出 `SHARP EDGE Lv N · 工具名` 提示。
 
-| 等级 | 工具 | 手感 |
-| --- | --- | --- |
-| 0 | FINGER 手指 | 起步，笔刷最小 |
-| 1 | LONG NAIL 长指甲 | 笔刷略大 |
-| 2 | SCRAPER 小刮板 | 刮得更快 |
-| 3 | SHOVEL 小铲子 | 一笔刮开一片 |
-| 4 | COIN 硬币 | 中后期主力 |
-| 5 | SPATULA 刮刀 | 大面积推平 |
-| 6 | GOLD SHOVEL 金铲子 | 满级，最快 |
+| 等级 | 工具 | 光标尺寸 | 刮面半径 |
+| --- | --- | --- | --- |
+| 0 | FINGER 手指 | 32px | 4.0 |
+| 1 | LONG NAIL 长指甲 | 48px | 5.8 |
+| 2 | SCRAPER 小刮板 | 48px | 7.6 |
+| 3 | SHOVEL 小铲子 | 64px | 9.4 |
+| 4 | COIN 硬币 | 64px | 11.2 |
+| 5 | SPATULA 刮刀 | 80px | 13.0 |
+| 6 | GOLD SHOVEL 金铲子 | 80px | 14.8 |
+
+刮面半径 = `4.0 + 等级 × 1.8`（`SkillTree.brush_radius`）：工具越大，一次刮开的
+面积越大，后期越刮越爽。
 
 工具图案用 16x16 字符网格画在 `scripts/pixel_art.gd` 里，`PixelArt.TOOLS`
 按等级索引，`PixelArt.tool_texture()` 带缓存供光标和 HUD 复用；
